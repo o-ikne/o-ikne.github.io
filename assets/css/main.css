@@ -2674,6 +2674,7 @@ input, select, textarea {
 			padding-top: 0%;
 		}
 
+
 			.features article .image img {
 				display: block;
 				width: 80%;
@@ -3320,4 +3321,20 @@ input, select, textarea {
 	}
 
 
+details > summary {
+  padding: 4px;
+  width: 200px;
+  border: none;
+  cursor: pointer;
+  padding-left: 2em;
+}
 
+details > p {
+  background-color: #4acaa8;
+  padding: 5px;
+  margin: 0;
+  box-shadow: 5px 5px 2px #bbbbbb;
+  padding-left: 3em;
+  color: white;
+  opacity: 80%;
+}
