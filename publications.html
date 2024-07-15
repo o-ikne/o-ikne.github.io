@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications - My Academic Web Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Publications</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="cv.html">CV</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="publications">
+            <div class="publication-section">
+                <h2>Conference Papers</h2>
+                <div class="publication">
+                    <h3>Skeleton-based Self-Supervised Feature Extraction for Improved Dynamic Hand Gesture Recognition</h3>
+                    <p><strong>Authors:</strong> Omar Ikne, Benjamin Allaert, Hazem Wannous</p>
+                    <p><strong>Conference:</strong> The 18th IEEE International Conference on Automatic Face and Gesture Recognition, 2024</p>
+                    <a href="link-to-paper-1" class="paper-link">Read Paper</a>
+                    <button onclick="toggleAbstract('abstract1')">Show Abstract</button>
+                    <p id="abstract1" class="abstract">Abstract of Conference Paper 1</p>
+                </div>
+                <div class="publication">
+                    <h3>Spatio-Temporal Sparse Graph Convolution Network for Hand Gesture Recognition</h3>
+                    <p><strong>Authors:</strong> Omar Ikne, Rim Slama, Hichem Saoudi, Hazem Wannous</p>
+                    <p><strong>Conference:</strong>The 18th IEEE International Conference on Automatic Face and Gesture Recognition, 2024</p>
+                    <a href="link-to-paper-2" class="paper-link">Read Paper</a>
+                    <button onclick="toggleAbstract('abstract2')">Show Abstract</button>
+                    <p id="abstract2" class="abstract">Abstract of Conference Paper 2</p>
+                </div>
+                
+                <div class="publication">
+                    <h3>Automatic Modeling of Dynamical Interactions Within Marine Ecosystems</h3>
+                    <p><strong>Authors:</strong> Omar Ikne, Maxime Folschette, Tony Ribeiro</p>
+                    <p><strong>Conference:</strong>The 1st International Joint Conference on Learning & Reasoning, 2021</p>
+                    <a href="https://hal.science/hal-03347033/" class="paper-link">Read Paper</a>
+                    <button onclick="toggleAbstract('abstract3')">Show Abstract</button>
+                    <p id="abstract3" class="abstract">Marine ecology models are used to study and anticipate population variations of plankton and microalgae species. These variations can have an impact on ecological niches, the economy or the climate. Our objective is the automation of the creation of such models. Learning From Interpretation Transition (LFIT) is a framework that aims at learning the dynamics of a system by observing its state transitions. LFIT provides explainable predictions in the form of logical rules. In this paper, we introduce a method that allows to extract an influence graph from a LFIT model. We also propose an heuristic to improve the model against noise in the data.</p>
+                </div>
+                
+                <!-- Add more conference papers as needed -->
+            </div>
+            <div class="publication-section">
+                <h2>Journal Papers</h2>
+                <div class="publication">
+                    <h3>eMotion-GAN: A Motion-based GAN for Photorealistic and Facial Expression Preserving Frontal View Synthesis</h3>
+                    <p><strong>Authors:</strong> Omar Ikne, Benjamin Allaert, Ioan Marius Bilasco, Hazem Wannous</p>
+                    <p><strong>Journal:</strong> arXiv preprint arXiv:2404.09940, 2024</p>
+                    <a href="https://arxiv.org/abs/2404.09940" class="paper-link">Read Paper</a>
+                    <button onclick="toggleAbstract('abstract3')">Show Abstract</button>
+                    <p id="abstract3" class="abstract">Many existing facial expression recognition (FER) systems encounter substantial performance degradation when faced with variations in head pose. Numerous frontalization methods have been proposed to enhance these systems' performance under such conditions. However, they often introduce undesirable deformations, rendering them less suitable for precise facial expression analysis. In this paper, we present eMotion-GAN, a novel deep learning approach designed for frontal view synthesis while preserving facial expressions within the motion domain. Considering the motion induced by head variation as noise and the motion induced by facial expression as the relevant information, our model is trained to filter out the noisy motion in order to retain only the motion related to facial expression. The filtered motion is then mapped onto a neutral frontal face to generate the corresponding expressive frontal face. We conducted extensive evaluations using several widely recognized dynamic FER datasets, which encompass sequences exhibiting various degrees of head pose variations in both intensity and orientation. Our results demonstrate the effectiveness of our approach in significantly reducing the FER performance gap between frontal and non-frontal faces. Specifically, we achieved a FER improvement of up to +5% for small pose variations and up to +20% improvement for larger pose variations.</p>
+                </div>
+                <!-- Add more journal papers as needed -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Omar Ikne | ⵡⵉⵏ ⴰⵢⵜ ⵢⵉⴽⵏ</p>
+    </footer>
+    <script>
+        function toggleAbstract(id) {
+            var abstract = document.getElementById(id);
+            if (abstract.style.display === "none" || abstract.style.display === "") {
+                abstract.style.display = "block";
+            } else {
+                abstract.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
+
