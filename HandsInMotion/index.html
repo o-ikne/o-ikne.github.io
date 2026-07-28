@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HandsInMotion: Anatomically-Guided Diffusion for 3D Hand Synthesis</title>
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f7f7;
+      color: #222;
+      line-height: 1.6;
+    }
+    a {
+      text-decoration: none;
+      color: #0066cc;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 5px;
+      color: #0a3d62;
+      line-height: 1.2;
+    }
+    header p.authors {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    header p.affiliation {
+      font-style: italic;
+      font-size: 1rem;
+      color: #555;
+      margin-top: 3px;
+    }
+
+    /* Buttons */
+    .btn-row {
+      margin: 25px 0;
+      text-align: center;
+    }
+    .btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 8px 28px;
+      margin: 6px;
+      font-size: 1rem;
+      font-weight: 400;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: inline-block;
+    }
+    .btn:hover {
+      background-color: #065cb3;
+      text-decoration: none;
+    }
+
+    /* Hero image */
+    .hero {
+      margin: 20px 0 30px;
+      text-align: center;
+    }
+    .hero img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .hero figcaption {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: #444;
+      font-style: italic;
+    }
+
+    /* Video embed */
+    .video-embed {
+      margin: 30px 0;
+      text-align: center;
+    }
+    .video-embed video {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Generic sections */
+    section {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      margin-bottom: 30px;
+    }
+    section h2 {
+      margin-top: 0;
+      color: #0a3d62;
+      border-bottom: 2px solid #eaeaea;
+      padding-bottom: 8px;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+      gap: 20px;
+      text-align: center;
+      margin: 15px 0 5px;
+    }
+    .stat-item {
+      background: #f0f4f8;
+      padding: 15px 10px;
+      border-radius: 8px;
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #0a3d62;
+      line-height: 1.2;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Annotation images */
+    .annotation-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 15px;
+    }
+    .annotation-grid figure {
+      margin: 0;
+      text-align: center;
+    }
+    .annotation-grid img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .annotation-grid figcaption {
+      margin-top: 6px;
+      font-weight: 500;
+      color: #024A70;
+    }
+
+    /* Generated results */
+    .gen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .gen-grid figure {
+      margin: 0;
+      text-align: center;
+    }
+    .gen-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .gen-grid figcaption {
+      margin-top: 5px;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    /* ---- UPDATED CAROUSEL STYLES (bigger, with title) ---- */
+    .carousel-wrapper {
+      position: relative;
+      overflow: hidden;
+      margin: 20px 0 10px;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      padding: 20px 30px;
+      text-align: center;
+    }
+
+    /* Bold title above video */
+    .slide-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0a3d62;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .carousel-slide video {
+      max-width: 100%;
+      max-height: 450px;          /* bigger videos */
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: #fff;
+      display: inline-block;
+    }
+
+    .carousel-slide figcaption {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #024A70;
+      font-weight: 500;
+    }
+
+    /* Arrow buttons */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.55);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 26px;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      padding: 0;
+      line-height: 1;
+    }
+    .carousel-arrow:hover {
+      background: #065cb3;
+    }
+    .carousel-arrow-left {
+      left: 12px;
+    }
+    .carousel-arrow-right {
+      right: 12px;
+    }
+
+    /* Dots */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 0 6px;
+    }
+
+    .carousel-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ccc;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      padding: 0;
+    }
+
+    .carousel-dot.active {
+      background: #0a3d62;
+    }
+
+    .carousel-dot:hover {
+      background: #065cb3;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      .btn {
+        padding: 8px 18px;
+        font-size: 0.9rem;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(3,1fr);
+      }
+      .stat-number {
+        font-size: 2rem;
+      }
+      .carousel-slide {
+        padding: 15px 20px;
+      }
+      .carousel-slide video {
+        max-height: 300px;          /* bigger on mobile too */
+      }
+      .carousel-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+      }
+      .slide-title {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <h1>HandsInMotion: Anatomically-Guided Diffusion for Text- and Body-Conditioned 3D Hand Motion Synthesis</h1>
+    <p class="authors">Omar Ikne, Hazem Wannous, Benjamin Allaert</p>
+    <p class="affiliation">IMT Nord Europe, Institut Mines-Télécom, Univ. Lille, Centre for Digital Systems, F-59000 Lille, France.</p>
+  </header>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <a href="#" target="_blank" class="btn">Paper</a>
+    <a href="https://github.com/o-ikne/HandsInMotion.git" target="_blank" class="btn">Code</a>
+    <a href="#" target="_blank" class="btn">Download Data</a>
+    <a href="#" target="_blank" class="btn">License</a>
+  </div>
+
+  <!-- Embedded Video (teaser) -->
+  <div class="video-embed">
+    <video controls muted playsinline>
+      <source src="files/videos/our_video.mp4" type="video/mp4" />
+    </video>
+    <p style="margin-top:6px; font-size:0.9rem; color:#555;">Watch our video.</p>
+  </div>
+
+  <!-- Dataset Description -->
+  <section>
+    <h2>Dataset Description</h2>
+    <p>
+      <strong>HandsInMotion</strong> is a large‑scale, high‑precision motion capture dataset for bimanual hand gesture research. It contains <strong>6,600 sequences (32.6M frames)</strong> from 30 performers across 84 gesture classes, recorded with sub‑millimeter MoCap accuracy and integrated into the SMPL‑H body model. Each sequence is paired with both sequence‑ and frame‑level natural language descriptions. Designed as a multi‑task benchmark, it supports text‑to‑motion generation, motion captioning, action‑to‑motion generation, and motion recognition, bridging language and expressive human gesture.
+    </p>
+    
+  <!-- Hero Image (Figure 1) -->
+  <figure class="hero">
+    <img src="files/handsinmotion illustration.jpg" alt="Overview of HandsInMotion dataset." />
+	<figcaption><b>HandsInMotion</b> dataset unifies text, body, and hand motion by providing fine-grained bimanual gestures, whole-body context, and multi-level semantic annotations.</figcaption>
+  </figure>
+
+    <h3>Key Statistics</h3>
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-number">6,610</div><div class="stat-label">Sequences</div></div>
+      <div class="stat-item"><div class="stat-number">32.6M</div><div class="stat-label">Frames</div></div>
+      <div class="stat-item"><div class="stat-number">84</div><div class="stat-label">Gesture Classes</div></div>
+      <div class="stat-item"><div class="stat-number">30</div><div class="stat-label">Participants</div></div>
+      <div class="stat-item"><div class="stat-number">120 Hz</div><div class="stat-label">Capture Rate</div></div>
+    </div>
+  </section>
+
+  <!-- Sample Videos - now with bold titles and larger videos -->
+  <section>
+    <h2>Sample Dataset Videos</h2>
+    <p style="margin-bottom:10px;">A few examples from the dataset, illustrating the diversity of gestures and subjects.</p>
+    
+    <div class="carousel-wrapper">
+      <!-- Left Arrow -->
+      <button class="carousel-arrow carousel-arrow-left" id="carouselArrowLeft">‹</button>
+      <!-- Right Arrow -->
+      <button class="carousel-arrow carousel-arrow-right" id="carouselArrowRight">›</button>
+
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Slide 1 -->
+        <div class="carousel-slide">
+          <div class="slide-title">One hand counts other hand fingers</div>
+          <video muted playsinline>
+            <source src="files/videos/0777.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: red;">right hand’s extended index finger</span> taps each <span style="color: green;">left hand finger</span> one by one, with thumb extended and other <span style="color: red;">right fingers</span> bent and <span style="color: green;">left fingers</span> extended, simulating counting.
+          </figcaption>
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Draw cross mark</div>
+          <video muted playsinline>
+            <source src="files/videos/1882.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand</span> remains open with the <span style="color: green;">fingers extended and slightly splayed</span>. The <span style="color: red;">right hand extends the index finger while the thumb stays tucked and the remaining fingers remain flexed</span>. The <span style="color: red;">index finger traces two intersecting diagonal strokes</span>, forming an X shape commonly associated with negation or rejection.
+          </figcaption>
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Draw a heart with index fingers</div>
+          <video muted playsinline>
+            <source src="files/videos/0820.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: blue;">index fingers of both hands extend forward</span> while all other fingers remain slightly curled toward their respective palms, then  <span style="color: blue;">trace synchronized paths</span> that begin at the top center, curve outward and downward, then meet at the bottom point to complete a heart shape.
+          </figcaption>
+        </div>
+        <!-- Slide 4 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Rock-paper-scissors</div>
+          <video muted playsinline>
+            <source src="files/videos/2874.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand fingers are relaxed and spread</span>, while the <span style="color: red;">right hand</span> cycles through three distinct positions: a <span style="color: red;">closed fist (rock), a flat hand (paper), and extended index and middle fingers (scissors)</span>.
+          </figcaption>
+        </div>
+        <!-- Slide 5 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Draw infinity</div>
+          <video muted playsinline>
+            <source src="files/videos/2663.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand holds its fingers extended and slightly straight</span>, while the <span style="color: red;">right hand traces an infinity</span> symbol with the <span style="color: red;">extended index finger, thumb slightly bent, and other fingers mostly curled</span>, forming a figure-eight.
+          </figcaption>
+        </div>
+        <!-- Slide 6 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Okay sign</div>
+          <video muted playsinline>
+            <source src="files/videos/0518.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand</span> shapes an OK sign by <span style="color: green;">linking the thumb and index finger into a circular loop</span>, with the thumb extended, the index mostly bent. The <span style="color: red;">right hand's fingers remain relaxed and spread</span>, maintaining a loose, open position.
+          </figcaption>
+        </div>
+        <!-- Slide 7 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Air quotes</div>
+          <video muted playsinline>
+            <source src="files/videos/0570.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand</span> forms air quotes by <span style="color: green;">extending the index and middle fingers straight upward, while the thumb and remaining fingers curl inward toward the palm</span>, mimicking the shape of quotation marks. Meanwhile, the <span style="color: red;">right hand mirrors this movement</span>, creating a symmetrical gesture.
+          </figcaption>
+        </div>
+        <!-- Slide 8 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Draw rectangle</div>
+          <video muted playsinline>
+            <source src="files/videos/0575.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand extends its index finger forward</span>, while the <span style="color: red;">right hand does the same</span>, both hands curling their remaining fingers into the palm as they move, thus creating a rectangle frame.
+          </figcaption>
+        </div>
+        <!-- Slide 9 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Finger gun</div>
+          <video muted playsinline>
+            <source src="files/videos/3937.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand extends its thumb upward, with the index and middle fingers forward</span> in a pistol-like formation, curling the remaining fingers inward. Meanwhile, the <span style="color: red;">right hand mirrors this posture</span>, extending its thumb upward and positioning its index and middle fingers forward in a similar pistol simulation, with the remaining fingers curled.
+          </figcaption>
+        </div>
+        <!-- Slide 10 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Draw circle with index</div>
+          <video muted playsinline>
+            <source src="files/videos/1837.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand's fingers stay straight and loosely spread</span>, while the <span style="color: red;">right hand sketches a circular path vertically clockwise using the index outstretched</span>, thumb extended and other fingers bent.
+          </figcaption>
+        </div>
+        <!-- Slide 11 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Denial gesture</div>
+          <video muted playsinline>
+            <source src="files/videos/1931.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand extends its fingers in a relaxed, open posture</span>, while the <span style="color: red;">right hand's index finger oscillates horizontally</span>, the other fingers remaining flexed.
+          </figcaption>
+        </div>
+        <!-- Slide 12 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Crossing fingers</div>
+          <video muted playsinline>
+            <source src="files/videos/2912.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand forms a curved shape, with the index finger extended and the other fingers curled inward</span>, while the <span style="color: red;">right hand mirrors this movement</span>, its index finger crossing over the left hand's index finger, as if to reject something.
+          </figcaption>
+        </div>
+        <!-- Slide 13 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Photo frame</div>
+          <video muted playsinline>
+            <source src="files/videos/1970.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand forms an L-shape with the index finger and the thumb extended</span> remaining fingers bent, while the <span style="color: red;">right hand mirrors this gesture</span>, creating a rectangular frame.
+          </figcaption>
+        </div>
+        <!-- Slide 14 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Rolling motion</div>
+          <video muted playsinline>
+            <source src="files/videos/2000.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand extends its fingers</span>, while the <span style="color: red;">right hand does the same</span>, both hands rotate forward around each other in a smooth, rolling motion.
+          </figcaption>
+        </div>
+        <!-- Slide 15 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Zoom with fingers</div>
+          <video muted playsinline>
+            <source src="files/videos/1865.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand's fingers rest in a relaxed, open position</span>, while the <span style="color: red;">right hand</span> performs a zoom-out motion by <span style="color: red;">curling the thumb and index finger together</span>, maintaining a compact shape.
+          </figcaption>
+        </div>
+        <!-- Slide 16 -->
+        <div class="carousel-slide">
+          <div class="slide-title">Finger counting</div>
+          <video muted playsinline>
+            <source src="files/videos/3587.webm" type="video/mp4">
+          </video>
+          <figcaption>
+            The <span style="color: green;">left hand unfolds its fingers in a deliberate sequence</span>, commencing with the thumb, then the index, middle, ring, and pinky, until fully extended, while the <span style="color: red;">right hand maintains a steady, straight posture </span> with its fingers.
+          </figcaption>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dots -->
+    <div class="carousel-dots" id="carouselDots"></div>
+
+  </section>
+  
+  <!-- Annotation Examples (prominent) -->
+  <section>
+    <h2>Annotation Examples</h2>
+    <div class="annotation-grid">
+      <figure>
+        <figcaption><strong>High‑level descriptions</strong> (body‑level)</figcaption>
+        <img src="files/samples_high_level.jpg" alt="High-level descriptions examples" />
+      </figure>
+      <figure>
+        <figcaption><strong>Fine‑grained descriptions</strong> (hands‑level)</figcaption>
+        <img src="files/samples_finegrained.jpg" alt="Fine-grained descriptions examples" />
+      </figure>
+  </section>
+
+  <!-- Citation -->
+  <section class="bibtex">
+    <h2>Citation</h2>
+    <pre>
+    </pre>
+  </section>
+
+  <footer>
+    &copy; 2026 Omar Ikne, Hazem Wannous, Benjamin Allaert — HandsInMotion Dataset Project
+  </footer>
+
+</div>
+
+<!-- Carousel JavaScript -->
+<script>
+  (function() {
+    const track = document.getElementById('carouselTrack');
+    const slides = track.querySelectorAll('.carousel-slide');
+    const dotsContainer = document.getElementById('carouselDots');
+    let currentIndex = 0;
+    let advanceTimer = null;
+    let endedCount = 0;
+    let currentVideo = null;
+    const totalSlides = slides.length;
+
+    // Build dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.classList.add('carousel-dot');
+      if (i === 0) dot.classList.add('active');
+      dot.dataset.index = i;
+      dot.addEventListener('click', function() {
+        goToSlide(parseInt(this.dataset.index));
+      });
+      dotsContainer.appendChild(dot);
+    }
+    const dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+    function goToSlide(index) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      currentIndex = index;
+      const offset = -currentIndex * 100;
+      track.style.transform = 'translateX(' + offset + '%)';
+      
+      // Update dots
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+      });
+
+      // Clear previous timer
+      if (advanceTimer) {
+        clearTimeout(advanceTimer);
+        advanceTimer = null;
+      }
+
+      // Pause all videos and reset
+      const allVideos = track.querySelectorAll('video');
+      allVideos.forEach(v => { v.pause(); v.currentTime = 0; });
+
+      const activeSlide = slides[currentIndex];
+      const video = activeSlide.querySelector('video');
+      currentVideo = video;
+
+      if (video) {
+        endedCount = 0;
+        // Remove old listener to avoid duplicates
+        video.removeEventListener('ended', handleEnded);
+        video.addEventListener('ended', handleEnded);
+        
+        video.currentTime = 0;
+        video.play().catch(e => console.log('Autoplay blocked:', e));
+
+        // Fallback timer: if the video never fires 'ended' (e.g. GIFs),
+        // we advance after roughly 2 loops.
+        let duration = video.duration;
+        if (!duration || duration <= 0) duration = 3; // fallback for GIFs
+        let delay = duration * 2 * 1000;
+        advanceTimer = setTimeout(() => {
+          goToSlide(currentIndex + 1);
+        }, delay);
+      } else {
+        // No video: fallback 4 seconds
+        advanceTimer = setTimeout(() => {
+          goToSlide(currentIndex + 1);
+        }, 4000);
+      }
+    }
+
+    function handleEnded() {
+      endedCount += 1;
+      if (endedCount < 2) {
+        // Play again
+        if (currentVideo) {
+          currentVideo.currentTime = 0;
+          currentVideo.play().catch(e => console.log('Play failed:', e));
+        }
+      } else {
+        // Played twice, move to next
+        if (advanceTimer) {
+          clearTimeout(advanceTimer);
+          advanceTimer = null;
+        }
+        goToSlide(currentIndex + 1);
+      }
+    }
+
+    // Arrow buttons
+    const leftArrow = document.getElementById('carouselArrowLeft');
+    const rightArrow = document.getElementById('carouselArrowRight');
+    leftArrow.addEventListener('click', function() {
+      goToSlide(currentIndex - 1);
+    });
+    rightArrow.addEventListener('click', function() {
+      goToSlide(currentIndex + 1);
+    });
+
+    // Initialize
+    goToSlide(0);
+  })();
+</script>
+
+</body>
+</html>
