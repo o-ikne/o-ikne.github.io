@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICMI 2026 Tutorial: Using Hand Gestures for Multimodal Interactions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f8f9fa;
+            color: #1e1e2f;
+            line-height: 1.6;
+        }
+
+        /* ----- HERO HEADER (cover image) ----- */
+        .hero {
+            /* ===========================================================
+               INSTRUCTION: Replace 'cover.jpg' with your local image path.
+               Example: 'images/my-tutorial-cover.jpg' or '../img/header.png'
+               =========================================================== */
+            background: linear-gradient(135deg, rgba(10, 25, 50, 0.78), rgba(30, 60, 110, 0.70)),
+                        url('images/cover.png') center/cover no-repeat;
+            padding: 10rem 2rem 3rem;
+            text-align: center;
+            color: #ffffff;
+            border-bottom: 3px solid #2a5a9a;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 0.3rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            opacity: 0.95;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .hero .event-meta {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.12);
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+        }
+
+        /* ----- main container ----- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px 18px 0 0;
+            margin-top: -1.5rem;
+            padding: 2.5rem 2.8rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            position: relative;
+            z-index: 2;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: 1rem;
+            color: #0b1a33;
+            border-left: 5px solid #3b6cb7;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 1.8rem;
+            margin-bottom: 0.6rem;
+            color: #1f3a6b;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.4rem;
+            margin-bottom: 0.4rem;
+            color: #2a4a7a;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin: 0.4rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .schedule-item {
+            background: #f9fbfd;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid #3b6cb7;
+        }
+
+        .schedule-item strong {
+            color: #0b1a33;
+        }
+
+        .organizer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .organizer-card {
+            background: #f9fbfd;
+            border-radius: 16px;
+            padding: 1.2rem 1.4rem 1.4rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid #eef3f9;
+        }
+
+        .organizer-card h4 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #0b1a33;
+        }
+
+        .organizer-card .affiliation {
+            font-size: 0.9rem;
+            color: #3d5a80;
+            margin-bottom: 0.6rem;
+        }
+
+        .organizer-card p {
+            font-size: 0.95rem;
+            color: #1e2f4a;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e1e8f2;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1a3a6a;
+        }
+
+        .footer {
+            margin-top: 2.8rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid #dfe6ef;
+            font-size: 0.9rem;
+            color: #4d627c;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footer a {
+            color: #2a5a9a;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 1.5rem;
+                margin-top: -1rem;
+            }
+            .hero .event-meta {
+                font-size: 0.95rem;
+                gap: 1rem;
+                padding: 0.4rem 1.2rem;
+            }
+            .organizer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO HEADER with local cover image (replace 'cover.jpg' in CSS above) -->
+    <header class="hero">
+        <h1>Using Hand Gestures for Multimodal Interactions</h1>
+        <div class="subtitle">Foundations, Methods, and Emerging Challenges</div>
+	<div class="event-meta">
+	    <span>📅 ICMI 2026 · Napoli, Italy</span>
+	    <span>🕒 Friday, Oct 9 · 8:30</span>
+	    <span>⏱️ 3h 40m</span>
+	    <span>🏷️ <span class="badge" style="background:rgba(255,255,255,0.2);color:#fff;">Research Tutorial</span></span>
+	</div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+        <!-- ==================== CONCISE ABSTRACT ==================== -->
+        <h2>Abstract</h2>
+        <p>
+            Hand gestures are a natural and expressive modality for human communication, playing an increasing role in human–computer interaction, extended reality, robotics, and embodied AI. Yet, building robust gesture-based interfaces is challenging—issues range from tracking quality and continuous recognition to semantic interpretation, ergonomics, and real-time deployment.
+        </p>
+        <p>
+            This tutorial covers the complete pipeline: state-of-the-art hand and finger tracking (vision, depth, wearables), gesture recognition (segmented and continuous, learning-based methods, benchmarks), and recent advances in hand motion generation with multimodal conditioning (text, audio, body, objects). Participants will gain a concise yet comprehensive view of how to capture, recognize, interpret, and generate hand gestures in interactive systems.
+        </p>
+
+        <!-- ========== CONCISE MOTIVATION & RELEVANCE ========== -->
+        <h2>Motivation &amp; Relevance to the ICMI Community</h2>
+        <p>
+            This tutorial directly addresses core interests of the ICMI community: hand gestures are a fundamental modality in multimodal interaction, yet researchers and practitioners face persistent challenges in acquisition, tracking, semantic fusion, usability, and real-time performance. By bridging foundational concepts with recent advances, we equip participants to tackle these issues in their own work.
+        </p>
+        <p>
+            The tutorial offers a unified view of the complete gesture pipeline—from sensing to generation—grounded in the organizers’ extensive experience in benchmark creation, model development, and usable interface design. It is especially timely given the rapid progress in foundation models, vision-language-action systems, and generative AI, making it essential for developing the next generation of embodied and human-centered interactive technologies.
+        </p>
+
+        <!-- LEARNING OBJECTIVES -->
+        <h2>Learning Objectives</h2>
+        <p>
+            The tutorial is intended for researchers, practitioners, and students working in XR, human–computer interaction, virtual and augmented reality, robotics, embodied AI, multimodal interaction, and immersive systems. No prior expertise in gesture recognition or motion generation is required.
+        </p>
+        <p>By the end of the tutorial, participants will be able to:</p>
+        <ul>
+            <li>Understand the role of hand gestures as a key modality in multimodal human–computer interaction and their applications in intelligent interactive systems.</li>
+            <li>Describe the complete gesture interaction pipeline, including gesture acquisition, hand tracking, gesture recognition, semantic interpretation, and gesture generation.</li>
+            <li>Compare current sensing technologies and machine learning approaches for gesture recognition, including vision-based, wearable, and multimodal methods.</li>
+            <li>Identify widely used benchmark datasets, evaluation metrics, and experimental protocols for gesture analysis and recognition.</li>
+            <li>Recognize the capabilities and limitations of state-of-the-art models and generative AI techniques for gesture understanding and motion synthesis.</li>
+            <li>Understand practical challenges in designing robust gesture-based interactive systems, including real-time performance, robustness, ergonomy, usability, and generalization across users and environments.</li>
+            <li>Identify open research challenges and promising future directions in gesture computing and multimodal interaction, enabling participants to apply these insights to their own research and development projects.</li>
+        </ul>
+
+        <!-- DETAILED DESCRIPTION -->
+        <h2>Detailed Description</h2>
+        <p>
+            The tutorial will combine lecture-style presentations, practical demonstrations, and interactive discussion with the audience and is expected to last approximately <strong>3 hours, 40 minutes</strong>, including discussion.<br>
+            The tutorial will be accompanied by a curated list of references, benchmark datasets, software tools, and open-source repositories related to hand tracking, gesture recognition, and hand motion generation.
+        </p>
+
+        <h3>Planned Schedule</h3>
+
+        <div class="schedule-item">
+            <strong>1. Introduction: Gestures in Multimodal Interaction</strong> — 20 min
+            <ul>
+                <li>Hand gestures, actions, and related semantics</li>
+                <li>Role of gestures in human communication and multimodal interfaces</li>
+                <li>Gesture types: symbolic, deictic, manipulative, communicative, and co-speech gestures</li>
+                <li>Applications in HCI, XR, robotics, virtual agents, and assistive technologies</li>
+                <li>Main challenges: ambiguity, ergonomics, fatigue, cultural variability, and semantic mapping</li>
+            </ul>
+        </div>
+
+        <div class="schedule-item">
+            <strong>2. Enabling Technologies for Hand and Finger Tracking</strong> — 20 min
+            <ul>
+                <li>Vision-based hand tracking</li>
+                <li>Depth sensors and RGB-D cameras</li>
+                <li>Wearable sensors and data gloves</li>
+                <li>Marker-based and markerless tracking</li>
+                <li>Data quality issues: occlusion, noise, calibration, latency, frame rate, and tracking loss</li>
+                <li>Practical implications for real-time gesture-based interaction</li>
+            </ul>
+        </div>
+
+        <div class="schedule-item">
+            <strong>3. Hand Gesture Recognition: Methods, Benchmarks, and Applications</strong> — 80 min
+            <ul>
+                <li>Gesture representations and encoding strategies</li>
+                <li>Static, dynamic, segmented, and continuous gesture recognition</li>
+                <li>Temporal modeling and sequence-based recognition</li>
+                <li>Learning-based methods for gesture classification and detection</li>
+                <li>Continuous recognition challenges: segmentation, false positives, temporal ambiguity, and online inference</li>
+                <li>Benchmark datasets and evaluation protocols</li>
+                <li>Practical tools and implementation considerations</li>
+                <li>Demonstrations of gesture-based applications</li>
+            </ul>
+        </div>
+
+        <div class="schedule-item">
+            <strong>4. Hand Motion Generation: Recent Advances and Challenges</strong> — 80 min
+            <ul>
+                <li><strong>Introduction to Hand Motion Generation</strong>
+                    <ul>
+                        <li>Why generate hand motion?</li>
+                        <li>Applications in virtual agents, sign language, XR, robotics, and embodied AI</li>
+                        <li>Key challenges: high degrees of freedom, sparse data, realism, and temporal coherence</li>
+                    </ul>
+                </li>
+                <li><strong>Multimodal Conditioning</strong>
+                    <ul>
+                        <li>Text-conditioned hand motion generation</li>
+                        <li>Audio-conditioned gesture generation during speech</li>
+                        <li>Body-conditioned and pose-conditioned hand motion</li>
+                        <li>Object-conditioned generation for grasping and manipulation</li>
+                        <li>Overview of common generation pipelines and model families</li>
+                    </ul>
+                </li>
+                <li><strong>Ensuring Physical Plausibility</strong>
+                    <ul>
+                        <li>Biomechanical constraints</li>
+                        <li>Joint limits and natural motion priors</li>
+                        <li>Body–hand coordination</li>
+                        <li>Contact consistency and object interaction</li>
+                        <li>Real-time generation and latency constraints</li>
+                    </ul>
+                </li>
+                <li><strong>Evaluation and Common Pitfalls</strong>
+                    <ul>
+                        <li>Evaluation metrics: FID, diversity, realism, physical validity, and task success</li>
+                        <li>Common failures: floating hands, impossible grasps, jitter, lack of synchronization, and dataset bias</li>
+                        <li>Limitations of current evaluation protocols</li>
+                        <li>Open research challenges</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="schedule-item">
+            <strong>5. Discussion and Open Challenges</strong> — 20 min
+            <ul>
+                <li>Lessons learned from recognition and generation pipelines</li>
+                <li>Open problems in gesture-based methods for multimodal interaction</li>
+                <li>Toward robust, adaptive, and user-centered gesture interfaces</li>
+                <li>Questions and discussion with participants</li>
+            </ul>
+        </div>
+
+        <!-- ORGANIZERS -->
+        <h2>Organizers</h2>
+        <div class="organizer-grid">
+            <div class="organizer-card">
+                <h4>Andrea Giachetti</h4>
+                <div class="affiliation">Full Professor, Università degli Studi di Verona, Italy</div>
+                <p>
+                    Leads the Intelligo-GRAIL lab, performing research in XR and HCI. Author of more than 180 papers in peer-reviewed conferences and journals.
+                </p>
+            </div>
+            <div class="organizer-card">
+                <h4>Marco Emporio</h4>
+                <div class="affiliation">Post-doctoral Researcher, Università degli Studi di Verona, Italy</div>
+                <p>
+                    Focuses on human–computer interaction and computer vision, with emphasis on hand gesture recognition and tracking in XR environments.
+                </p>
+            </div>
+            <div class="organizer-card">
+                <h4>Hazem Wannous</h4>
+                <div class="affiliation">Professor, IMT Nord Europe, University of Lille, France</div>
+                <p>
+                    Research in computer vision, machine learning, virtual/augmented reality, and HCI. Co-organizer of several international conferences and workshops.
+                </p>
+            </div>
+            <div class="organizer-card">
+                <h4>Omar Ikne</h4>
+                <div class="affiliation">Post-doctoral Researcher, IMT Nord Europe, France</div>
+                <p>
+                    Bridges generative models and computer vision, focusing on human motion analysis and synthesis, with contributions to hand motion recognition and generation.
+                </p>
+            </div>
+        </div>
+
+        <!-- REFERENCES -->
+        <h2>References</h2>
+        <p>
+            A comprehensive bibliography will be provided during the tutorial. Selected references from the organizers’ work include:
+        </p>
+        <ul style="font-size:0.95rem;">
+            <li>Emporio et al. (2026). Meaningful and Ergonomic Hand Poses for Extended RealityInteraction.</li>
+            <li>Emporio et al. (2025). Continuous hand gesture recognition: Benchmarks and methods.</li>
+            <li>Ikne et al. (2025). AG-MAE: Anatomically Guided Spatio-Temporal Masked Auto-Encoder for Online Hand Gesture Recognition.</li>
+            <li>Ikne et al. (2024). Skeleton-based self-supervised feature extraction for improved dynamic hand gesture recognition.</li>
+            <li>Ikne et al. (2024). Spatio-temporal sparse graph convolution network for hand gesture recognition.</li>
+            <li>Veldhuijzen et al. (2024). SHREC 2024: Recognition of dynamic hand motions molding clay.</li>
+            <li>Cunico et al. (2023) Oo-dmvmt: A deep multi-view multi-task classification framework for real-time 3d hand gesture classification and segmentation.</li>
+            <li>Caputo et al. (2021). SHREC 2021: Skeleton-based hand gesture recognition in the wild.</li>
+            <li>Caputo et al. (2019). Shrec 2019 track: online gesture recognition.</li>
+        </ul>
+
+        <div class="footer">
+            <span>ICMI 2026 Tutorial &bull; October 05–09, 2026 &bull; Napoli, Italy</span>
+            <span>
+                <a href="#">Back to top</a>
+            </span>
+        </div>
+    </div>
+</body>
+</html>
